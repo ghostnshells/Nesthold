@@ -273,3 +273,11 @@ describe('carrier pigeons', () => {
     expect(inbox.received[0].from).toBe('Captain Quackers');
   });
 });
+
+describe('flock membership', () => {
+  it('returns null when not in a flock', async () => {
+    const g = await guest();
+    const res = await g.get('/flock').expect(200);
+    expect(res.body).toBeNull();
+  });
+});

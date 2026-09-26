@@ -166,9 +166,10 @@ export class BattleSim {
       });
     this.countable = this.buildings.filter((b) => b.counts).length;
 
-    // Loot sits in the Nest Core and Granaries.
-    const holders = this.buildings.filter((b) => b.kind === 'nestCore' || b.kind === 'granary');
-    const weight = (b: SimBuilding) => (b.kind === 'granary' ? 2 : 1);
+    // Loot sits mostly in the Granaries and Nest Core, with a little in each producer.
+    const LOOT_WEIGHT: Partial<Record<BuildingKind, number>> = { granary: 3, nestCore: 2, grainField: 1, featherLoom: 1 };
+    const holders = this.buildings.filter((b) => LOOT_WEIGHT[b.kind]);
+    const weight = (b: SimBuilding) => LOOT_WEIGHT[b.kind] ?? 0;
     const totalW = holders.reduce((n, b) => n + weight(b), 0);
     for (const res of ['grain', 'feathers'] as const) {
       const lootable = Math.floor(setup.defenderResources[res] * LOOT_FRACTION);

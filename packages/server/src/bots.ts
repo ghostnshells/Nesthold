@@ -37,7 +37,8 @@ const REPLIES = [
 ];
 
 export function botArmy(core: number): Army {
-  return { mallard: 6 * core, merganser: 2 * core, teal: core, sapper: core, eider: core > 1 ? 1 : 0 };
+  // Sized to fit the bot's hatchery housing.
+  return { mallard: 4 * core, merganser: 2 * core, teal: core, sapper: core, eider: core > 1 ? 1 : 0 };
 }
 
 export function seedBots(db: Db, now: number): void {

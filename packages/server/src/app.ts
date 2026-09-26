@@ -34,7 +34,8 @@ export function createApp(game: Game, opts: { staticDir?: string } = {}) {
 
   const route = (fn: Handler) => (req: Request, res: Response) => {
     try {
-      res.json(fn(req as Request & { player: PlayerRow }) ?? { ok: true });
+      const out = fn(req as Request & { player: PlayerRow });
+      res.json(out === undefined ? { ok: true } : out);
     } catch (err) {
       if (err instanceof GameError) res.status(400).json({ error: err.message });
       else if (err instanceof NotFound) res.status(404).json({ error: err.message });

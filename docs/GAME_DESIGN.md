@@ -69,7 +69,7 @@ These rules apply to every distraction, and the sim enforces them in `battle.ts`
 - The sim is deterministic and ticks at 10 Hz. The battle lasts up to 3 minutes.
 - You deploy by tapping any tile that isn't within one tile of a building. Hidden traps don't block deployment.
 - **Stars**: 1 for ≥50% destroyed, 1 for the Nest Core, and 1 for 100%. Walls and traps don't count toward destruction.
-- **Loot**: 20% of the defender's stored grain and feathers. It's split between the Core (weight 1) and each Granary (weight 2), and you gain each share when that building falls.
+- **Loot**: 20% of the defender's stored grain and feathers. It's split across each Granary (weight 3), the Core (weight 2), and each Grain Field and Feather Loom (weight 1). You gain each share when that building falls.
 - **Anti-cheat**: the client sends only the list of deploy commands. The server replays them against the same snapshot and seed, then awards the loot the server computed.
 - **Asynchronous**: you attack a snapshot of the defender's nest. The defender gets a 10-minute shield and a replayable battle log.
 - Every deployed duck is used up, as in Clash of Clans.

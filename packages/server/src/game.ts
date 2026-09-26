@@ -3,6 +3,7 @@ import {
   COMBAT_DUCKS,
   COMBAT_DUCK_DEFS,
   GameError,
+  Rng,
   PIGEON_KINDS,
   addResources,
   addToArmy,
@@ -123,6 +124,7 @@ export class Game {
     const id = randomUUID();
     const token = randomUUID();
     const rnd = hashSeed(id);
+    const spot = this.freeWorldSpot(rnd);
     const clean = (name ?? '').replace(/[^\p{L}\p{N} _'-]/gu, '').trim().slice(0, 20);
     insertPlayer(
       this.db,
@@ -131,8 +133,8 @@ export class Game {
         token,
         name: clean || `Duckling${rnd % 10000}`,
         nest: createStarterNest(now),
-        wx: 330 + (rnd % 340),
-        wy: 330 + ((rnd >>> 12) % 340),
+        wx: spot.x,
+        wy: spot.y,
         flockId: null,
         trophies: 0,
         shieldUntil: 0,
@@ -142,6 +144,25 @@ export class Game {
       now,
     );
     return { token, player: this.player(id) };
+  }
+
+  /** Somewhere near the middle of the map that isn't on top of another nest. */
+  private freeWorldSpot(seed: number): { x: number; y: number } {
+    const taken = this.db.prepare('SELECT wx, wy FROM players').all() as Raw[];
+    const rng = new Rng(seed);
+    let best = { x: 500, y: 500 };
+    let bestGap = -1;
+    for (let i = 0; i < 40; i++) {
+      const spread = 170 + i * 8;
+      const c = { x: Math.round(500 + (rng.next() * 2 - 1) * spread), y: Math.round(500 + (rng.next() * 2 - 1) * spread) };
+      const gap = Math.min(Infinity, ...taken.map((t) => Math.hypot(t.wx - c.x, t.wy - c.y)));
+      if (gap >= 90) return c;
+      if (gap > bestGap) {
+        bestGap = gap;
+        best = c;
+      }
+    }
+    return best;
   }
 
   publicPlayer(p: PlayerRow) {
@@ -659,6 +680,7 @@ export class Game {
       const status = !landed ? 'flying' : r.intercepted_by ? 'lost' : 'delivered';
       return {
         id: r.id,
+        toId: r.to_id,
         to: name(r.to_id as string),
         text: r.body,
         kind: r.kind,

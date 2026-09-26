@@ -1,0 +1,27 @@
+{
+  "name": "nesthold",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "packages/shared",
+    "packages/server",
+    "packages/client"
+  ],
+  "scripts": {
+    "dev:server": "npm run dev -w @nesthold/server",
+    "dev:client": "npm run dev -w @nesthold/client",
+    "start": "npm start -w @nesthold/server",
+    "build": "npm run build -w @nesthold/client",
+    "test": "vitest run",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "e2e": "node e2e/smoke.mjs",
+    "ios": "npm run ios -w @nesthold/client"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}
